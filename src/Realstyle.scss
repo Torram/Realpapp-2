@@ -1,0 +1,36 @@
+///////////////////////////////////////////////////////////////////////
+//realapp
+//////////////////////////////////////////////////////////////////////
+header {
+	padding: 5px 0;
+	color: var(--light-color);
+	background-color: var(--primary-color);
+	color: var(--light-color);
+	.branding {
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		img {
+			height: 40px;
+			width: auto;
+			margin-right: 5px;
+		}
+	}
+	a:link,
+	a:visited {
+		color: var(--light-color);
+		margin-right: 10px;
+	}
+	a:hover {
+		text-decoration: underline;
+	}
+}
+.preEditable {
+	width: 100%;
+	border: solid #bdbdbd 1px;
+	padding: 0 5px;
+}
+.fas {
+	cursor: pointer;
+}
