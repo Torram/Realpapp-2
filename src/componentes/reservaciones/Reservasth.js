@@ -28,7 +28,7 @@ const Reservasth = () => {
 				</thead>
 				<tbody>
 					{reservaciones.map((res) => (
-						<Reservastd key={res.id} reserva={res} />
+						<Reservastd key={res.folio} reserva={res} />
 					))}
 				</tbody>
 			</table>

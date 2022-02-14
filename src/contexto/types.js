@@ -3,4 +3,5 @@ export const RESERVACION = "RESERVACION";
 export const LOADING = "LOADING";
 export const MODAL = "MODAL";
 export const CLIENTE = "CLIENTE";
+export const EMPRESA = "EMPRESA";
 export const TARIFAS = "TARIFAS";

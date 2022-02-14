@@ -29,32 +29,59 @@ const ReservaState = (props) => {
 	///////////////////////
 	// Crear reserva
 	const nuevaReserva = async (body) => {
-		let feed = null;
-		const resp = await axios
-			.post(`/api/reservaciones`, body, {
-				headers: { "Content-Type": "application/json" },
-			})
-			.then((resp) => {
-				feed = resp.data;
-			})
-			.catch((error) => {
-				feed = error.response;
-			});
-		return feed;
+		return new Promise((resolve, reject) => {
+			let feed = null;
+			axios
+				.post(`/api/reservaciones`, body, {
+					headers: { "Content-Type": "application/json" },
+				})
+				.then((resp) => {
+					feed = resp.data;
+					resolve(feed);
+				})
+				.catch((error) => {
+					feed = error.response;
+					reject(feed);
+				});
+		});
 	};
 	//////////////////////
 	//crear cliente
 	const nuevoCliente = async (body) => {
-		const resp = await axios
-			.post(`/api/clientes`, body, {
-				headers: { "Content-Type": "application/json" },
-			})
-			.then((resp) => {
-				return resp.data;
-			})
-			.catch((error) => {
-				return error.response;
-			});
+		return new Promise((resolve, reject) => {
+			let feedBack = null;
+			axios
+				.post(`/api/clientes`, body, {
+					headers: { "Content-Type": "application/json" },
+				})
+				.then((resp) => {
+					feedBack = resp.data;
+					resolve(feedBack);
+				})
+				.catch((error) => {
+					feedBack = error.response;
+					reject(feedBack);
+				});
+		});
+	};
+	//////////////////////
+	//crear empresa
+	const nuevaEmpresa = async (body) => {
+		return new Promise((resolve, reject) => {
+			let feedBack = null;
+			axios
+				.post(`/api/empresas`, body, {
+					headers: { "Content-Type": "application/json" },
+				})
+				.then((resp) => {
+					feedBack = resp.data;
+					resolve(feedBack);
+				})
+				.catch((error) => {
+					feedBack = error.response;
+					reject(feedBack);
+				});
+		});
 	};
 	/////////////////////
 	// traerReservasRec
@@ -184,6 +211,7 @@ const ReservaState = (props) => {
 				tarifas: state.tarifas,
 				nuevaReserva,
 				nuevoCliente,
+				nuevaEmpresa,
 				traerReservasRec,
 				traerReservasApellido,
 				traerReservasFolio,

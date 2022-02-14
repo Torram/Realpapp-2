@@ -3,7 +3,7 @@ import ReservaContext from "../../contexto/reservacion/reservaContext.js";
 import PropTypes from "prop-types";
 
 const Reservastd = ({
-	reserva: { id, nombre, apellido, llegada, hora, personas, tarifa, grupo },
+	reserva: { folio, nombre, apellido, llegada, hora, personas, tarifa, grupo },
 }) => {
 	const reservaContext = useContext(ReservaContext);
 	const { traerReservaSingle, setModalOpen } = reservaContext;
@@ -28,14 +28,14 @@ const Reservastd = ({
 
 	const oCtraerReserva = (e) => {
 		e.preventDefault();
-		const resp = traerReservaSingle(id);
+		const resp = traerReservaSingle(folio);
 		resp.then(() => {
 			setModalOpen();
 		});
 	};
 	return (
 		<tr onClick={oCtraerReserva}>
-			<td>{id}</td>
+			<td>{folio}</td>
 			<td>{apellido + " " + nombre}</td>
 			<td>{fllegada}</td>
 			<td>{hora}</td>

@@ -7,13 +7,19 @@ const NuevaReserva = () => {
 	////////////////////
 	//contexto
 	const reservaContext = useContext(ReservaContext);
-	const { nuevaReserva, nuevoCliente, traerTarifas, tarifas, traerReservasRec } =
-		reservaContext;
+	const {
+		nuevaReserva,
+		nuevoCliente,
+		nuevaEmpresa,
+		traerTarifas,
+		tarifas,
+		traerReservasRec,
+	} = reservaContext;
 	///////////////////
 	//state
 	const [nombre, setNombre] = useState("");
 	const [apellido, setApellido] = useState("");
-	const [grupo, setGrupo] = useState("");
+	const [grupo, setGrupo] = useState(null);
 	const [llegada, setLlegada] = useState(hoy);
 	const [hora, setHora] = useState("11:30");
 	const [salida, setSalida] = useState("");
@@ -25,10 +31,13 @@ const NuevaReserva = () => {
 	const [rfc, setRfc] = useState("");
 	const [rsocial, setRsocial] = useState("");
 	const [direccion, setDireccion] = useState("");
+	const [cp, setCp] = useState("");
 	const [ciudad, setCiudad] = useState("");
 	const [estado, setEstado] = useState("");
 	const [mail, setMail] = useState("");
 	const [tel, setTel] = useState("");
+	const [cliente_id, setCliente_id] = useState(null);
+	const [empresa_id, setEmpresa_id] = useState(null);
 	const [usr, setUsr] = useState(null);
 
 	///////////////////
@@ -48,46 +57,66 @@ const NuevaReserva = () => {
 	const onChangeRfc = (e) => setRfc(e.target.value);
 	const onChangeRsocial = (e) => setRsocial(e.target.value);
 	const onChangeDireccion = (e) => setDireccion(e.target.value);
+	const onChangeCp = (e) => setCp(e.target.value);
 	const onChangeCiudad = (e) => setCiudad(e.target.value);
 	const onChangeEstado = (e) => setEstado(e.target.value);
 	const onChangeMail = (e) => setMail(e.target.value);
 	const onChangeTel = (e) => setTel(e.target.value);
 
+	///////////////////////
+	// metodo para crear el body del cliente
+	const getClienteData = () => {
+		const clienteObj = {};
+		clienteObj.nombre = nombre;
+		clienteObj.apellido = apellido;
+		grupo.length > 0 && (clienteObj.grupo = grupo);
+		clienteObj.direccion = direccion;
+		clienteObj.ciudad = ciudad;
+		clienteObj.estado = estado;
+		clienteObj.mail = mail;
+		tel.length > 0 && (clienteObj.tel = tel);
+		return clienteObj;
+	};
+	//////////////////////////////
+	//metodo para crear el body de la empresa
+	const getEmpresaData = () => {
+		if (factura) {
+			const empresaObj = {};
+			empresaObj.rfc = rfc;
+			empresaObj.rsocial = rsocial;
+			empresaObj.direccion = direccion;
+			empresaObj.cp = cp;
+			empresaObj.ciudad = ciudad;
+			empresaObj.estado = estado;
+			empresaObj.mail = mail;
+			tel.length > 0 && (empresaObj.tel = tel);
+			return empresaObj;
+		} else {
+			return false;
+		}
+	};
+
+	///////////////////////
+	// metodo para crear el body de la reserva
 	const getReservaData = () => {
 		const reservaObj = {};
-		reservaObj.nombre = nombre;
-		reservaObj.apellido = apellido;
-		grupo.length > 0 && (reservaObj.grupo = grupo);
 		reservaObj.llegada = llegada;
 		reservaObj.hora = hora;
 		reservaObj.salida = salida;
 		reservaObj.tarifa = tarifa;
 		reservaObj.personas = personas;
 		reservaObj.habitaciones = habitaciones;
+		reservaObj.grupo = grupo;
 		info.length > 0 && (reservaObj.info = info);
-		factura ? (reservaObj.factura = 1) : (reservaObj.factura = 0);
+		reservaObj.cliente_id = cliente_id;
+		reservaObj.empresa_id = empresa_id;
 		reservaObj.ciudad = ciudad;
 		reservaObj.estado = estado;
-		reservaObj.rfc = rfc;
 		reservaObj.reservo = usr;
 		setUsr(null);
 		return reservaObj;
 	};
-	const getClienteData = () => {
-		if (factura) {
-			const clienteObj = {};
-			clienteObj.rfc = rfc;
-			clienteObj.rsocial = rsocial;
-			clienteObj.direccion = direccion;
-			clienteObj.ciudad = ciudad;
-			clienteObj.estado = estado;
-			clienteObj.mail = mail;
-			tel.length > 0 && (clienteObj.tel = tel);
-			return clienteObj;
-		} else {
-			return false;
-		}
-	};
+
 	///////////////////
 	// métodos
 	const submitReserva = async (ev) => {
@@ -104,20 +133,30 @@ const NuevaReserva = () => {
 		}
 		if (usr !== null) {
 			const reserva = async () => {
-				let reservacion = getReservaData();
-				const resp = await nuevaReserva(reservacion);
-				if (resp.success) {
-					traerReservasRec();
+				let clienteObj = getClienteData();
+				let empresaObj = getEmpresaData();
+				let reservaObj = getReservaData();
+				const cResp = await nuevoCliente(clienteObj);
+				if (cResp.success) {
+					setCliente_id(cResp.data.id);
+					reservaObj.cliente_id = cResp.data.id;
+					if (factura) {
+						const eResp = await nuevaEmpresa(empresaObj);
+						if (eResp.success) {
+							setEmpresa_id(eResp.data.id);
+							reservaObj.empresa_id = eResp.data.id;
+							nuevaReserva(reservaObj);
+						} else {
+							nuevaReserva(reservaObj);
+						}
+					}
 				}
 			};
 			reserva();
-			if (factura) {
-				let cliente = getClienteData();
-				nuevoCliente(cliente);
-			}
 		}
 		//eslint-disable-next-line
 	}, [usr, tarifas]);
+
 	return (
 		<div id='nuevaReserva'>
 			<form action='' onSubmit={submitReserva} className='card'>
@@ -223,6 +262,31 @@ const NuevaReserva = () => {
 						/>
 					</article>
 				</section>
+				<section className='grid-2'>
+					<article>
+						{/*Campo mail*/}
+						<label htmlFor='mail'>Email</label>
+						<input
+							name='mail'
+							type='text'
+							value={mail}
+							onChange={onChangeMail}
+							className=''
+							required
+						/>
+					</article>
+					<article>
+						{/*Campo tel*/}
+						<label htmlFor='tel'>Teléfono</label>
+						<input
+							name='tel'
+							type='number'
+							value={tel}
+							onChange={onChangeTel}
+							className=''
+						/>
+					</article>
+				</section>
 				<section className='grid-3'>
 					<div>
 						{/*Campo grupo*/}
@@ -245,6 +309,7 @@ const NuevaReserva = () => {
 							onChange={onChangeCiudad}
 							className=''
 							maxLength='250'
+							required
 						/>
 					</div>
 					<div>
@@ -257,6 +322,7 @@ const NuevaReserva = () => {
 							onChange={onChangeEstado}
 							className=''
 							maxLength='255'
+							required
 						/>
 					</div>
 				</section>
@@ -299,40 +365,33 @@ const NuevaReserva = () => {
 								className=''
 							/>
 						</article>
-						<article>
-							{/*Campo mail*/}
-							<label htmlFor='mail'>Email</label>
-							<input
-								name='mail'
-								type='text'
-								value={mail}
-								onChange={onChangeMail}
-								className=''
-								required
-							/>
-						</article>
-						<article>
-							{/*Campo tel*/}
-							<label htmlFor='tel'>Teléfono</label>
-							<input
-								name='tel'
-								type='text'
-								value={tel}
-								onChange={onChangeTel}
-								className=''
-							/>
-						</article>
-						<article className='gspan-2'>
-							{/*Campo direccion*/}
-							<label htmlFor='rsocial'>Dirección</label>
-							<input
-								name='direccion'
-								type='text'
-								value={direccion}
-								onChange={onChangeDireccion}
-								className=''
-							/>
-						</article>
+						<section className='grid-3 gspan-2'>
+							<div className='gspan-2'>
+								<article className='gspan-2'>
+									{/*Campo direccion*/}
+									<label htmlFor='rsocial'>Dirección</label>
+									<input
+										name='direccion'
+										type='text'
+										value={direccion}
+										onChange={onChangeDireccion}
+										className=''
+									/>
+								</article>
+							</div>
+							<div>
+								{/*Campo cp*/}
+								<label htmlFor='cp'>Código Postal</label>
+								<input
+									name='cp'
+									type='number'
+									maxLength='5'
+									value={cp}
+									onChange={onChangeCp}
+									className=''
+								/>
+							</div>
+						</section>
 					</section>
 				) : null}
 				<section>
