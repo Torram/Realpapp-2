@@ -1,10 +1,14 @@
 import React, { useContext, useState } from "react";
 import ReservaContext from "../../contexto/reservacion/reservaContext.js";
+import AlertContext from "../../contexto/alerta/alertContext.js";
 
 const Busqueda = () => {
 	const reservaContext = useContext(ReservaContext);
 	const { traerReservasApellido, traerReservasFolio, traerReservasFechas } =
 		reservaContext;
+
+	const alertContext = useContext(AlertContext);
+	const { setAlert } = alertContext;
 
 	const [busqApellido, setBusqApellido] = useState("");
 	const [busqFolio, setBusqFolio] = useState("");
@@ -16,14 +20,26 @@ const Busqueda = () => {
 	const onChangeRange1 = (e) => setRange1(e.target.value);
 	const onChangeRange2 = (e) => setRange2(e.target.value);
 
-	const SubmitBusqApellido = (e) => {
+	const SubmitBusqApellido = async (e) => {
 		e.preventDefault();
-		traerReservasApellido(busqApellido);
+		const resp = await traerReservasApellido(busqApellido);
+		resp.success
+			? setAlert(
+					`Se encontraro ${resp.data.length} reservaciones con esos parámetros`,
+					"success"
+			  )
+			: setAlert(`No se encontraron reservaciones con esos parámetros`, "danger");
 	};
 
-	const SubmitBusqFolio = (e) => {
+	const SubmitBusqFolio = async (e) => {
 		e.preventDefault();
-		traerReservasFolio(busqFolio);
+		const resp = await traerReservasFolio(busqFolio);
+		resp.success
+			? setAlert(
+					`Reservacion con folio ${resp.data[0].folio} encontrada`,
+					"success"
+			  )
+			: setAlert(`No se encontró reservación con ese folio`, "danger");
 	};
 
 	const getDateRange = () => {
@@ -32,10 +48,16 @@ const Busqueda = () => {
 		body.Rend = range2;
 		return body;
 	};
-	const SubmitBusqFechas = (e) => {
+	const SubmitBusqFechas = async (e) => {
 		e.preventDefault();
 		let bodyx = getDateRange();
-		traerReservasFechas(bodyx);
+		const resp = await traerReservasFechas(bodyx);
+		resp.success
+			? setAlert(
+					`Se encontraro ${resp.data.reservas.length} reservaciones en ese rango`,
+					"success"
+			  )
+			: setAlert(`No se encontraron reservaciones en ese rango`, "danger");
 	};
 	return (
 		<>

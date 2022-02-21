@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import ReservaContext from "../../contexto/reservacion/reservaContext.js";
+import AlertContext from "../../contexto/alerta/alertContext.js";
+
 const NuevaReserva = () => {
 	const hoyrw = new Date();
 	const hoyr = new Date(hoyrw.getTime() - hoyrw.getTimezoneOffset() * 60000);
@@ -14,12 +16,16 @@ const NuevaReserva = () => {
 		traerTarifas,
 		tarifas,
 		traerReservasRec,
+		unSetReservas,
 	} = reservaContext;
+	const alertContext = useContext(AlertContext);
+	const { setAlert } = alertContext;
+
 	///////////////////
 	//state
 	const [nombre, setNombre] = useState("");
 	const [apellido, setApellido] = useState("");
-	const [grupo, setGrupo] = useState(null);
+	const [grupo, setGrupo] = useState("");
 	const [llegada, setLlegada] = useState(hoy);
 	const [hora, setHora] = useState("11:30");
 	const [salida, setSalida] = useState("");
@@ -69,7 +75,7 @@ const NuevaReserva = () => {
 		const clienteObj = {};
 		clienteObj.nombre = nombre;
 		clienteObj.apellido = apellido;
-		grupo.length > 0 && (clienteObj.grupo = grupo);
+		grupo.length === 0 ? (clienteObj.grupo = null) : (clienteObj.grupo = grupo);
 		clienteObj.direccion = direccion;
 		clienteObj.ciudad = ciudad;
 		clienteObj.estado = estado;
@@ -131,32 +137,56 @@ const NuevaReserva = () => {
 		if (tarifas.length === 0) {
 			traerTarifas();
 		}
+		//si submiteas usr se vuelve true
 		if (usr !== null) {
 			const reserva = async () => {
 				let clienteObj = getClienteData();
 				let empresaObj = getEmpresaData();
 				let reservaObj = getReservaData();
+				// dispara nuevo cliente
 				const cResp = await nuevoCliente(clienteObj);
+				//si llega se genera el nuevo cliente capturamos en id
 				if (cResp.success) {
 					setCliente_id(cResp.data.id);
 					reservaObj.cliente_id = cResp.data.id;
+					//si requiere factura factura será true
 					if (factura) {
+						//disparamos la creacion de nueva empresa y si jala capturamos en el id
 						const eResp = await nuevaEmpresa(empresaObj);
 						if (eResp.success) {
 							setEmpresa_id(eResp.data.id);
 							reservaObj.empresa_id = eResp.data.id;
-							nuevaReserva(reservaObj);
-						} else {
-							nuevaReserva(reservaObj);
+							const rResp = await nuevaReserva(reservaObj);
+							rResp.success
+								? setAlert(
+										`Reservación creada con exito para ${nombre + " " + apellido}`,
+										"success"
+								  )
+								: setAlert(`Falló la reserva : ${rResp.messages}`, "danger");
 						}
+					} else {
+						const rResp = await nuevaReserva(reservaObj);
+						rResp.success
+							? setAlert(
+									`Reservación creada con exito para ${nombre + " " + apellido}`,
+									"success"
+							  )
+							: setAlert(`Falló la reserva : ${rResp.messages}`, "danger");
 					}
+				} else {
+					setAlert(cResp.messages, "danger");
 				}
 			};
 			reserva();
+			unSetReservas();
+			traerReservasRec();
+			setUsr(null);
 		}
 		//eslint-disable-next-line
 	}, [usr, tarifas]);
 
+	////////////////////////////////////////////////////////////////////////////
+	//return salida return salida return salida
 	return (
 		<div id='nuevaReserva'>
 			<form action='' onSubmit={submitReserva} className='card'>

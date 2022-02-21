@@ -29,130 +29,108 @@ const ReservaState = (props) => {
 	///////////////////////
 	// Crear reserva
 	const nuevaReserva = async (body) => {
-		return new Promise((resolve, reject) => {
-			let feed = null;
-			axios
-				.post(`/api/reservaciones`, body, {
-					headers: { "Content-Type": "application/json" },
-				})
-				.then((resp) => {
-					feed = resp.data;
-					resolve(feed);
-				})
-				.catch((error) => {
-					feed = error.response;
-					reject(feed);
-				});
-		});
+		try {
+			const resp = await axios.post(`/api/reservaciones`, body, {
+				headers: { "Content-Type": "application/json" },
+			});
+			return resp.data;
+		} catch (error) {
+			return error.response.data;
+		}
 	};
 	//////////////////////
 	//crear cliente
 	const nuevoCliente = async (body) => {
-		return new Promise((resolve, reject) => {
-			let feedBack = null;
-			axios
-				.post(`/api/clientes`, body, {
-					headers: { "Content-Type": "application/json" },
-				})
-				.then((resp) => {
-					feedBack = resp.data;
-					resolve(feedBack);
-				})
-				.catch((error) => {
-					feedBack = error.response;
-					reject(feedBack);
-				});
-		});
+		try {
+			const resp = await axios.post(`/api/clientes`, body, {
+				headers: { "Content-Type": "application/json" },
+			});
+			return resp.data;
+		} catch (error) {
+			return error.response.data;
+		}
 	};
 	//////////////////////
 	//crear empresa
 	const nuevaEmpresa = async (body) => {
-		return new Promise((resolve, reject) => {
-			let feedBack = null;
-			axios
-				.post(`/api/empresas`, body, {
-					headers: { "Content-Type": "application/json" },
-				})
-				.then((resp) => {
-					feedBack = resp.data;
-					resolve(feedBack);
-				})
-				.catch((error) => {
-					feedBack = error.response;
-					reject(feedBack);
-				});
-		});
+		try {
+			const resp = await axios.post(`/api/empresas`, body, {
+				headers: { "Content-Type": "application/json" },
+			});
+			return resp.data;
+		} catch (error) {
+			return error.response.data;
+		}
 	};
 	/////////////////////
 	// traerReservasRec
 	const traerReservasRec = async () => {
-		const resp = await axios
-			.get(`/api/reservaciones`)
-			.then((resp) => {
-				dispatch({ type: RESERVACIONES, payload: resp.data.data });
-			})
-			.catch((error) => {
-				console.log(error.response);
-			});
+		try {
+			const resp = await axios.get(`/api/reservaciones`);
+			dispatch({ type: RESERVACIONES, payload: resp.data.data });
+			return resp.data;
+		} catch (error) {
+			return error.response.data;
+		}
 	};
 
 	/////////////////////
 	// traerReservasfolio
 	const traerReservasApellido = async (apellido) => {
-		const resp = await axios
-			.get(`/api/reservaciones/busqueda/nombre/${apellido}`)
-			.then((resp) => {
-				dispatch({ type: RESERVACIONES, payload: resp.data.data });
-			})
-			.catch((error) => {
-				console.log(error.response);
-			});
+		try {
+			unSetReservas();
+			const resp = await axios.get(
+				`/api/reservaciones/busqueda/nombre/${apellido}`
+			);
+			dispatch({ type: RESERVACIONES, payload: resp.data.data });
+			return resp.data;
+		} catch (error) {
+			return error.response.data;
+		}
 	};
 
 	/////////////////////
 	// traerReservasfolio
 	const traerReservasFolio = async (folio) => {
-		const resp = await axios
-			.get(`/api/reservaciones/busqueda/folio/${folio}`)
-			.then((resp) => {
-				dispatch({ type: RESERVACIONES, payload: resp.data.data });
-			})
-			.catch((error) => {
-				console.log(error.response);
-			});
+		try {
+			const resp = await axios.get(`/api/reservaciones/busqueda/folio/${folio}`);
+			dispatch({ type: RESERVACIONES, payload: resp.data.data });
+			return resp.data;
+		} catch (error) {
+			return error.response.data;
+		}
 	};
 
 	/////////////////////
 	// traerReservasRangp de fechas
 	const traerReservasFechas = async (body) => {
-		const response = await axios
-			.post(`/api/reservaciones/busqueda/fechas/1`, body, {
+		try {
+			unSetReservas();
+			const resp = await axios.post(`/api/reservaciones/busqueda/fechas/1`, body, {
 				headers: { "Content-Type": "application/json" },
-			})
-			.then((resp) => {
-				console.log(resp.data);
-				dispatch({ type: RESERVACIONES, payload: resp.data.data.reservas });
-			})
-			.catch((error) => {
-				console.log(error.response);
 			});
+			dispatch({ type: RESERVACIONES, payload: resp.data.data.reservas });
+			return resp.data;
+		} catch (error) {
+			console.log(error.response.data);
+			return error.response.data;
+		}
 	};
 
 	//////////////////////
 	// traer reserva single
-	const traerReservaSingle = async (rid) => {
-		const resp = await axios
-			.get(`/api/reservaciones/${rid}`)
-			.then((resp) => {
-				dispatch({ type: RESERVACION, payload: resp.data.data });
-				let rfci = resp.data.data.rfc;
-				if (rfci !== null) {
-					traerClientePorRfc(rfci);
-				}
-			})
-			.catch((error) => {
-				console.log(error.response);
-			});
+	const traerReservaSingle = (rid) => {
+		return new Promise((resolve, reject) => {
+			axios
+				.get(`/api/reservaciones/${rid}`)
+				.then((resp) => {
+					dispatch({ type: RESERVACION, payload: resp.data.data });
+					resolve(resp.data);
+				})
+				.catch((error) => {
+					reject(error.response);
+				});
+		});
 	};
 
 	//////////////////////
@@ -196,10 +174,15 @@ const ReservaState = (props) => {
 	// set modal
 	const setModalOpen = () => {
 		dispatch({ type: MODAL, payload: true });
+		dispatch({ type: RESERVACION, payload: {} });
 	};
 	// unset modal
 	const unsetModalOpen = () => {
 		dispatch({ type: MODAL, payload: false });
+	};
+	// unsetReservas
+	const unSetReservas = () => {
+		dispatch({ type: RESERVACIONES, payload: [] });
 	};
 	return (
 		<ReservaContext.Provider
@@ -222,6 +205,7 @@ const ReservaState = (props) => {
 				traerClienteSingle,
 				traerClientePorRfc,
 				traerTarifas,
+				unSetReservas,
 			}}
 		>
 			{props.children}

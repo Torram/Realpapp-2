@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import NuevaReserva from "../reservaciones/NuevaReserva.js";
 import Reservasth from "../reservaciones/Reservasth.js";
 import Busqueda from "../reservaciones/Busqueda.js";
 import ReservaSingle from "../reservaciones/ReservaSingle.js";
+import ReservaContext from "../../contexto/reservacion/reservaContext.js";
 
 const Reservaciones = () => {
+	const reservaContext = useContext(ReservaContext);
+	const { modal } = reservaContext;
 	const [newReserva, setNewReserva] = useState(false);
 
 	const toggleNewReserva = () => {
@@ -39,7 +42,7 @@ const Reservaciones = () => {
 			{newReserva && <NuevaReserva />}
 			<Busqueda />
 			<Reservasth />
-			<ReservaSingle />
+			{modal && <ReservaSingle />}
 		</div>
 	);
 };

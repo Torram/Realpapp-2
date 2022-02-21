@@ -499,3 +499,37 @@ tr:nth-child(even) {
 		justify-content: center;
 	}
 }
+//alert
+.fas {
+	margin-right: 5px;
+}
+.alerta {
+	max-width: 90%;
+	margin: 0 auto;
+	text-align: center;
+	border-radius: 3px;
+	margin-bottom: 15px;
+	padding: 5px;
+	margin-top: 15px;
+}
+.alerta-danger {
+	background-color: lightcoral;
+	border: solid 1px red;
+	color: white !important;
+}
+.circle-danger {
+	color: white !important;
+}
+.alerta-success {
+	background-color: lightgreen;
+	border: solid 1px green;
+	color: black !important;
+}
+.circle-success {
+	color: black !important;
+}
+.alerta-light {
+	background-color: #eee;
+	border: solid 1px darkgrey;
+	color: #555;
+}

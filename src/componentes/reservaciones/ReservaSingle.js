@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
 import ReservaContext from "../../contexto/reservacion/reservaContext";
+import Spinner from "../elementos/Spinnermodal";
 const ReservaSingle = () => {
 	const reservaContext = useContext(ReservaContext);
-	const { reservacion, modal, unsetModalOpen, traerClientePorRfc, cliente } =
-		reservaContext;
+	const { reservacion, unsetModalOpen } = reservaContext;
+	const reservaLength = Object.keys(reservacion).length;
+
 	const {
 		id,
 		nombre,
@@ -16,18 +18,18 @@ const ReservaSingle = () => {
 		habitaciones,
 		grupo,
 		info,
-		factura,
+		rsocial,
 		rfc,
 		ciudad,
 		estado,
+		direccion,
+		tel,
+		mail,
 	} = reservacion;
 	const closeModal = () => {
 		unsetModalOpen();
 	};
-	const { rsocial, direccion, tel, mail } = cliente;
-	const rfc2 = cliente.rfc;
-
-	if (modal !== true) return null;
+	if (reservaLength === 0) return <Spinner />;
 	return (
 		<>
 			<div className='modalOver' />
@@ -77,7 +79,7 @@ const ReservaSingle = () => {
 					<p className='small bold'>Estado</p>
 					<p className='lead preEditable my-0'>{estado}</p>
 				</div>
-				{factura === 1 && (
+				{typeof rfc !== undefined && (
 					<>
 						<h2 className='gspan-4'>Facturación</h2>
 						<div className='gspan-2'>

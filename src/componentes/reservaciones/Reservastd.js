@@ -26,12 +26,10 @@ const Reservastd = ({
 	const fllegada =
 		llegadaF[2] + "/" + meses[llegadaF[1].replace(/^0+/, "")] + "/" + llegadaF[0];
 
-	const oCtraerReserva = (e) => {
+	const oCtraerReserva = async (e) => {
 		e.preventDefault();
-		const resp = traerReservaSingle(folio);
-		resp.then(() => {
-			setModalOpen();
-		});
+		setModalOpen();
+		traerReservaSingle(folio);
 	};
 	return (
 		<tr onClick={oCtraerReserva}>
