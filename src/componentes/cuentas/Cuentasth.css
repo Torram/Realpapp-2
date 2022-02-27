@@ -1,0 +1,74 @@
+table#cc {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border: 3px solid var(--primary-color);
+}
+
+tfoot th#cc {
+    text-align: right;
+}
+
+thead th#cc, tfoot th#cc, tfoot td#cc {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
+    border: 3px solid var(--primary-color);
+  }
+
+  tbody tr#cc{
+    padding: 0;
+    margin: 0;
+
+  }
+
+  tbody tr:nth-child(odd)#cc{
+    background-color: var(--light-color);
+  }
+  
+  tbody tr:nth-child(even)#cc{
+    background-color: var(--mid-color);
+  }
+/* CARGOS */
+  table#car {
+    table-layout:auto;
+    width: 100%;
+    border-collapse: collapse;
+    border:3px solid var(--primary-color);
+  }
+
+  thead th:nth-child(1)#car{
+    width:5%;
+  }
+  thead th:nth-child(2)#car{
+    width:10%;
+  }
+  thead th:nth-child(3)#car{
+    width:10%;
+  }
+  thead th:nth-child(5)#car{
+    width:30%;
+  }
+  thead th:nth-child(8)#car{
+    width:10%;
+  }
+  thead th:nth-child(9)#car{
+    width:5%;
+  }
+
+  tbody tr:nth-child(odd)#car{
+    background-color: var(--light-color);
+  }
+  
+  tbody tr:nth-child(even)#car{
+    background-color: var(--mid-color);
+  }
+  
+  thead th#car, tfoot th#car, tfoot td#car {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
+    border: 3px solid var(--primary-color);
+  }
+
+  tbody tr#car{
+    padding: 0;
+    margin: 0;
+
+  }

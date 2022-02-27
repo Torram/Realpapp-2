@@ -15,6 +15,12 @@ const Header = () => {
 					<Link to='/reservaciones'>
 						<p>Reservaciones</p>
 					</Link>
+					<Link to='/cuentas'>
+						<p>Cuentas</p>
+					</Link>
+					<Link to='/cargos'>
+						<p>Cargos</p>
+					</Link>
 					<i className='fas fa-sign-in-alt'></i>
 				</div>
 			</nav>
